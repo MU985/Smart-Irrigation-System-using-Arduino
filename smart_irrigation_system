@@ -1,0 +1,49 @@
+// Smart Irrigation System using Arduino
+
+const int sensorPin = A0;     // Soil moisture sensor pin
+const int relayPin = 7;       // Relay module pin
+
+int moistureValue = 0;
+
+// Adjust this value after testing your soil
+int drySoil = 600;   // above this value = DRY
+int wetSoil = 400;   // below this value = WET
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(relayPin, OUTPUT);
+
+  // Relay OFF initially (HIGH for active LOW relay)
+  digitalWrite(relayPin, HIGH);
+
+  Serial.println("Smart Irrigation System Started");
+}
+
+void loop() {
+
+  moistureValue = analogRead(sensorPin);
+
+  Serial.print("Moisture Value: ");
+  Serial.println(moistureValue);
+
+  // Soil is DRY → Turn pump ON
+  if (moistureValue > drySoil) {
+    Serial.println("Soil is DRY → Pump ON");
+    digitalWrite(relayPin, LOW);   // Relay ON
+  }
+
+  // Soil is WET → Turn pump OFF
+  else if (moistureValue < wetSoil) {
+    Serial.println("Soil is WET → Pump OFF");
+    digitalWrite(relayPin, HIGH);  // Relay OFF
+  }
+
+  // Moist soil → keep previous state
+  else {
+    Serial.println("Soil is Moist → No Change");
+  }
+
+  Serial.println("----------------------");
+
+  delay(2000);  // wait 2 seconds before next reading
+}
